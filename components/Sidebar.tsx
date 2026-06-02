@@ -36,10 +36,10 @@ export function Sidebar({ user }: SidebarProps) {
   const menuItems = [
     { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard' },
     { icon: CheckCircle2, label: 'Tasks', href: '/dashboard' },
-    { icon: BarChart3, label: 'Analytics', href: '#' },
-    { icon: Users, label: 'Team', href: '#' },
-    { icon: Settings, label: 'Settings', href: '#' },
-    { icon: HelpCircle, label: 'Help & Support', href: '#' },
+    { icon: BarChart3, label: 'Analytics', href: '/analytics' },
+    { icon: Users, label: 'Team', href: '/team' },
+    { icon: Settings, label: 'Settings', href: '/settings' },
+    { icon: HelpCircle, label: 'Help & Support', href: '/help' },
   ];
 
   return (
