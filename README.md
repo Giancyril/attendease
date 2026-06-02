@@ -318,10 +318,16 @@ SELECT * FROM sessions WHERE expires_at > CURRENT_TIMESTAMP;
 ## 📚 Documentation
 
 Comprehensive documentation available:
-- `PROJECT_SETUP_COMPLETE.md` - Setup guide
-- `CRUD_VERIFICATION_CHECKLIST.md` - Testing checklist
-- `FILE_STRUCTURE_AND_CRUD_MAP.md` - Detailed file map
-- `DEPLOYMENT_GUIDE.md` - Production deployment
+- 📖 **[Quick Start Guide](QUICKSTART.md)** - Get up and running in 5 minutes
+- 📋 **[Features Overview](FEATURES.md)** - Complete feature list
+- 🔌 **[API Documentation](API_DOCUMENTATION.md)** - API reference
+- 🧪 **[Testing Guide](TESTING.md)** - How to test everything
+- 🏗️ **[Architecture](ARCHITECTURE.md)** - System design
+- ✅ **[CRUD Verification](CRUD_VERIFICATION_CHECKLIST.md)** - Testing checklist
+- 📝 **[File Structure](FILE_STRUCTURE_AND_CRUD_MAP.md)** - Detailed file map
+- 🗺️ **[Roadmap](ROADMAP.md)** - Future plans
+- ❓ **[FAQ](FAQ.md)** - Frequently asked questions
+- 🚀 **[Deployment Guide](DEPLOYMENT_GUIDE.md)** - Production deployment
 
 ## 🔒 Security Features
 
