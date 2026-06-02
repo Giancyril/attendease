@@ -98,14 +98,6 @@ export default function LoginPage() {
               Sign up
             </Link>
           </div>
-
-          <div className="mt-8 pt-8 border-t border-slate-700">
-            <p className="text-xs text-slate-500 text-center mb-4">Demo Credentials (Optional):</p>
-            <div className="space-y-2 text-xs text-slate-400">
-              <p className="bg-slate-700 px-3 py-2 rounded">username: <span className="text-slate-300">demo</span></p>
-              <p className="bg-slate-700 px-3 py-2 rounded">password: <span className="text-slate-300">demo123</span></p>
-            </div>
-          </div>
         </Card>
       </div>
     </div>
