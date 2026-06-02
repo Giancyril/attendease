@@ -10,9 +10,6 @@ export const metadata: Metadata = {
   title: 'TaskFlow - Organize Your Work',
   description: 'A powerful task management application with full CRUD operations using PostgreSQL database',
   generator: 'TaskFlow',
-  icons: {
-    icon: '/favicon.svg',
-  },
 }
 
 export default function RootLayout({
