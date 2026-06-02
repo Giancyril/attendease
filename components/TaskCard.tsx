@@ -86,9 +86,16 @@ export function TaskCard({ task, onEdit, onDelete, onStatusChange }: TaskCardPro
           </div>
 
           {/* Status Badge */}
-          <div className={`text-xs font-medium px-2.5 py-1 rounded-full border ${statusColors[task.status]}`}>
-            {task.status}
-          </div>
+          <select
+            value={task.status}
+            onChange={(e) => onStatusChange(task.id, e.target.value)}
+            className={`text-xs font-medium px-2.5 py-1 rounded-full border cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 ${statusColors[task.status]}`}
+          >
+            <option value="todo">Todo</option>
+            <option value="in-progress">In Progress</option>
+            <option value="completed">Completed</option>
+            <option value="on-hold">On Hold</option>
+          </select>
 
           {/* Assignee */}
           {task.assignee && (
