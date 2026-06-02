@@ -11,10 +11,7 @@ export const metadata: Metadata = {
   description: 'A powerful task management application with full CRUD operations using PostgreSQL database',
   generator: 'TaskFlow',
   icons: {
-    icon: [
-      { url: '/favicon.svg', type: 'image/svg+xml' },
-      { url: '/favicon.ico', sizes: 'any' },
-    ],
+    icon: '/favicon.svg',
   },
 }
 
