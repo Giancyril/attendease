@@ -1,5 +1,11 @@
 # 🎯 Task Management Dashboard - CRUD Application
 
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Next.js](https://img.shields.io/badge/Next.js-16-black)
+![React](https://img.shields.io/badge/React-19-blue)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue)
+
 A full-stack web application implementing complete CRUD (Create, Read, Update, Delete) operations for task management with PostgreSQL database integration.
 
 ## ✨ Features
