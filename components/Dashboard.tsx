@@ -17,6 +17,7 @@ export function Dashboard() {
   const [editingTask, setEditingTask] = useState<Task | undefined>();
   const [priorityFilter, setPriorityFilter] = useState<Priority | null>(null);
   const [statusFilter, setStatusFilter] = useState<Status | null>(null);
+  const [searchTerm, setSearchTerm] = useState<string>('');
 
   // Fetch tasks
   const fetchTasks = async () => {
