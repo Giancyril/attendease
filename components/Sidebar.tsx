@@ -14,6 +14,7 @@ import {
   Menu,
   X,
   CheckCircle2,
+  UserCircle,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -73,10 +74,10 @@ export function Sidebar({ user }: SidebarProps) {
         {/* User Profile */}
         <div className="p-4 border-b border-slate-700">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">
-              {user.full_name?.charAt(0) || user.username.charAt(0).toUpperCase()}
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white flex-shrink-0">
+              <UserCircle className="w-6 h-6" />
             </div>
-            <div className="flex-1">
+            <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-white truncate">
                 {user.full_name || user.username}
               </p>
