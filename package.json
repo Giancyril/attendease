@@ -1,6 +1,10 @@
 {
   "name": "taskflow",
   "version": "1.0.0",
+  "description": "A powerful task management application with full CRUD operations",
+  "author": "TaskFlow Team",
+  "keywords": ["task-management", "crud", "nextjs", "postgresql", "typescript"],
+  "license": "MIT",
   "private": true,
   "scripts": {
     "dev": "next dev",
