@@ -113,7 +113,7 @@ export function Sidebar({ user }: SidebarProps) {
             }}
             className="w-full flex items-center gap-3 px-4 py-2 rounded-lg text-slate-300 hover:bg-red-900/20 hover:text-red-400 transition-colors"
           >
-            <LogOut className="w-5 h-5" />
+            <UserCircle className="w-5 h-5" />
             <span className="text-sm font-medium">Logout</span>
           </button>
         </div>
