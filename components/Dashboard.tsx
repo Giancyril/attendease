@@ -9,6 +9,7 @@ import { CalendarDays, Plus, RefreshCw } from 'lucide-react';
 
 export function Dashboard() {
   const [stats, setStats] = useState<TodayStats & { half_day?: number; on_leave?: number } | null>(null);
+  const [summaryStats, setSummaryStats] = useState<TodayStats & { half_day?: number; on_leave?: number } | null>(null);
   const [records, setRecords] = useState<AttendanceRecord[]>([]);
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(true);
@@ -25,14 +26,16 @@ export function Dashboard() {
     setLoading(true);
     setStatsLoading(true);
     try {
-      const [statsRes, recordsRes, empRes] = await Promise.all([
+      const [statsRes, recordsRes, empRes, summaryRes] = await Promise.all([
         fetch('/api/attendance/today'),
         fetch(`/api/attendance?date=${today}`),
         fetch('/api/employees?status=active'),
+        fetch('/api/attendance/summary?startDate=2026-05-01&endDate=2026-06-30'),
       ]);
       if (statsRes.ok) setStats(await statsRes.json());
       if (recordsRes.ok) setRecords(await recordsRes.json());
       if (empRes.ok) setEmployees(await empRes.json());
+      if (summaryRes.ok) setSummaryStats(await summaryRes.json());
     } catch (err) {
       console.error('[Dashboard] fetch error:', err);
     } finally {
@@ -127,9 +130,19 @@ export function Dashboard() {
       </div>
 
       {/* Body */}
-      <div className="max-w-7xl mx-auto px-6 py-6 space-y-6">
-        {/* Stats */}
-        <StatsCards stats={stats ?? { total_employees: 0, present: 0, absent: 0, late: 0, on_leave: 0, attendance_rate: 0 }} loading={statsLoading} />
+      <div className="max-w-7xl mx-auto px-6 py-6 space-y-8">
+        
+        {/* Summary Stats (May-June) */}
+        <div>
+          <h2 className="text-base font-bold text-gray-800 mb-3">Overall Summary (May 1 - June 30)</h2>
+          <StatsCards stats={summaryStats ?? { total_employees: 0, present: 0, absent: 0, late: 0, on_leave: 0, attendance_rate: 0 }} loading={statsLoading} isSummary />
+        </div>
+
+        {/* Today's Stats */}
+        <div>
+          <h2 className="text-base font-bold text-gray-800 mb-3">Today's Overview</h2>
+          <StatsCards stats={stats ?? { total_employees: 0, present: 0, absent: 0, late: 0, on_leave: 0, attendance_rate: 0 }} loading={statsLoading} />
+        </div>
 
         {/* Today's Attendance Table */}
         <div>

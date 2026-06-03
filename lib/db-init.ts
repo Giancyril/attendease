@@ -87,14 +87,14 @@ export async function initializeDatabase() {
       await query(`
         INSERT INTO employees (employee_code, full_name, email, phone, department, position, status, avatar_initials)
         VALUES
-          ('EMP001', 'Sarah Johnson', 'sarah.johnson@company.com', '+1-555-0101', 'Engineering', 'Senior Developer', 'active', 'SJ'),
-          ('EMP002', 'Michael Chen', 'michael.chen@company.com', '+1-555-0102', 'Engineering', 'Frontend Developer', 'active', 'MC'),
-          ('EMP003', 'Alex Rodriguez', 'alex.rodriguez@company.com', '+1-555-0103', 'Design', 'UI/UX Designer', 'active', 'AR'),
-          ('EMP004', 'Emma Thompson', 'emma.thompson@company.com', '+1-555-0104', 'QA', 'QA Engineer', 'active', 'ET'),
-          ('EMP005', 'James Wilson', 'james.wilson@company.com', '+1-555-0105', 'DevOps', 'DevOps Engineer', 'active', 'JW'),
-          ('EMP006', 'Priya Patel', 'priya.patel@company.com', '+1-555-0106', 'HR', 'HR Manager', 'active', 'PP'),
-          ('EMP007', 'David Kim', 'david.kim@company.com', '+1-555-0107', 'Engineering', 'Backend Developer', 'active', 'DK'),
-          ('EMP008', 'Lisa Martinez', 'lisa.martinez@company.com', '+1-555-0108', 'Marketing', 'Marketing Lead', 'active', 'LM')
+          ('EMP001', 'Juan dela Cruz', 'juan.delacruz@company.com', '+63-917-123-4567', 'Engineering', 'Senior Developer', 'active', 'JD'),
+          ('EMP002', 'Maria Santos', 'maria.santos@company.com', '+63-918-234-5678', 'Engineering', 'Frontend Developer', 'active', 'MS'),
+          ('EMP003', 'Mark Reyes', 'mark.reyes@company.com', '+63-919-345-6789', 'Design', 'UI/UX Designer', 'active', 'MR'),
+          ('EMP004', 'Anna Garcia', 'anna.garcia@company.com', '+63-920-456-7890', 'QA', 'QA Engineer', 'active', 'AG'),
+          ('EMP005', 'Paolo Mendoza', 'paolo.mendoza@company.com', '+63-921-567-8901', 'DevOps', 'DevOps Engineer', 'active', 'PM'),
+          ('EMP006', 'Kristine Bautista', 'kristine.bautista@company.com', '+63-922-678-9012', 'HR', 'HR Manager', 'active', 'KB'),
+          ('EMP007', 'Miguel Villanueva', 'miguel.villanueva@company.com', '+63-923-789-0123', 'Engineering', 'Backend Developer', 'active', 'MV'),
+          ('EMP008', 'Patricia Cruz', 'patricia.cruz@company.com', '+63-924-890-1234', 'Marketing', 'Marketing Lead', 'active', 'PC')
       `);
       console.log('[DB] Sample employees seeded');
     }

@@ -6,6 +6,7 @@ import { Users, UserCheck, UserX, Clock, TrendingUp, CalendarOff } from 'lucide-
 interface StatsCardsProps {
   stats: TodayStats & { half_day?: number; on_leave?: number };
   loading?: boolean;
+  isSummary?: boolean;
 }
 
 function StatCard({
@@ -37,7 +38,7 @@ function StatCard({
   );
 }
 
-export function StatsCards({ stats, loading }: StatsCardsProps) {
+export function StatsCards({ stats, loading, isSummary = false }: StatsCardsProps) {
   if (loading) {
     return (
       <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
@@ -65,35 +66,35 @@ export function StatsCards({ stats, loading }: StatsCardsProps) {
         label="Present"
         value={stats.present}
         color="text-emerald-600"
-        sub="On time today"
+        sub={isSummary ? "Total on time" : "On time today"}
       />
       <StatCard
         icon={UserX}
         label="Absent"
         value={stats.absent}
         color="text-red-500"
-        sub="Not checked in"
+        sub={isSummary ? "Total absences" : "Not checked in"}
       />
       <StatCard
         icon={Clock}
         label="Late"
         value={stats.late}
         color="text-amber-500"
-        sub="After schedule"
+        sub={isSummary ? "Total late" : "After schedule"}
       />
       <StatCard
         icon={CalendarOff}
         label="On Leave"
         value={stats.on_leave ?? 0}
         color="text-violet-500"
-        sub="Approved leaves"
+        sub={isSummary ? "Total leaves taken" : "Approved leaves"}
       />
       <StatCard
         icon={TrendingUp}
         label="Attendance Rate"
         value={`${stats.attendance_rate}%`}
         color="text-blue-600"
-        sub="Today's rate"
+        sub={isSummary ? "Average rate" : "Today's rate"}
       />
     </div>
   );
