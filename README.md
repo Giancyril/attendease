@@ -413,7 +413,3 @@ For issues or questions:
 2. Review documentation files
 3. Verify database connection
 4. Check server logs in terminal
-
-##  License
-
-This project is for educational purposes demonstrating CRUD operations with a modern web stack.
