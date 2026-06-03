@@ -26,15 +26,20 @@ function formatTime(t?: string) {
   return `${hour % 12 || 12}:${m} ${hour >= 12 ? 'PM' : 'AM'}`;
 }
 
-function duration(clockIn?: string, clockOut?: string) {
-  if (!clockIn || !clockOut) return '—';
+function getDurationInfo(clockIn?: string, clockOut?: string) {
+  if (!clockIn || !clockOut) return { text: '—', status: 'none' };
   const [ih, im] = clockIn.split(':').map(Number);
   const [oh, om] = clockOut.split(':').map(Number);
   const mins = (oh * 60 + om) - (ih * 60 + im);
-  if (mins <= 0) return '—';
+  if (mins <= 0) return { text: '—', status: 'none' };
   const h = Math.floor(mins / 60);
   const m = mins % 60;
-  return `${h}h ${m}m`;
+  
+  let status = 'regular';
+  if (mins > 480) status = 'overtime';
+  else if (mins < 480) status = 'undertime';
+  
+  return { text: `${h}h ${m}m`, status, mins };
 }
 
 export function AttendanceTable({ records, loading, onEdit, onDelete, showEmployee = true }: AttendanceTableProps) {
@@ -111,7 +116,27 @@ export function AttendanceTable({ records, loading, onEdit, onDelete, showEmploy
                   </td>
                   <td className="px-4 py-3 text-sm font-mono text-gray-700">{formatTime(rec.clock_in)}</td>
                   <td className="px-4 py-3 text-sm font-mono text-gray-700">{formatTime(rec.clock_out)}</td>
-                  <td className="px-4 py-3 text-sm text-gray-500">{duration(rec.clock_in, rec.clock_out)}</td>
+                  <td className="px-4 py-3 text-sm text-gray-500">
+                    {(() => {
+                      const dur = getDurationInfo(rec.clock_in, rec.clock_out);
+                      if (dur.status === 'none') return <span className="text-gray-400">—</span>;
+                      return (
+                        <div className="flex flex-col gap-1 items-start">
+                          <span className="font-medium text-gray-700">{dur.text}</span>
+                          {dur.status === 'overtime' && (
+                            <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-orange-100 text-orange-700 uppercase tracking-wide">
+                              Overtime
+                            </span>
+                          )}
+                          {dur.status === 'undertime' && (
+                            <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 uppercase tracking-wide">
+                              Undertime
+                            </span>
+                          )}
+                        </div>
+                      );
+                    })()}
+                  </td>
                   <td className="px-4 py-3">
                     <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border ${s.bg} ${s.color}`}>
                       <StatusIcon className="w-3 h-3" />

@@ -10,6 +10,7 @@ const DEPARTMENTS = ['All', 'Engineering', 'Design', 'QA', 'DevOps', 'HR', 'Mark
 
 export function Employees() {
   const [employees, setEmployees] = useState<Employee[]>([]);
+  const [streaks, setStreaks] = useState<Record<number, number>>({});
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [deptFilter, setDeptFilter] = useState('All');
@@ -21,8 +22,12 @@ export function Employees() {
   const fetchEmployees = async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/employees');
+      const [res, streaksRes] = await Promise.all([
+        fetch('/api/employees'),
+        fetch('/api/employees/streaks')
+      ]);
       if (res.ok) setEmployees(await res.json());
+      if (streaksRes.ok) setStreaks(await streaksRes.json());
     } catch (err) {
       console.error('[Employees] fetch error:', err);
     } finally {
@@ -171,6 +176,7 @@ export function Employees() {
               <EmployeeCard
                 key={emp.id}
                 employee={emp}
+                streak={streaks[emp.id] || 0}
                 onEdit={e => { setEditingEmployee(e); setShowForm(true); }}
                 onToggleStatus={handleToggleStatus}
               />

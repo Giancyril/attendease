@@ -4,13 +4,15 @@ import { useEffect, useState } from 'react';
 import { AttendanceRecord, Employee, AttendanceStatus, CreateAttendanceInput, UpdateAttendanceInput } from '@/lib/types';
 import { AttendanceTable } from '@/components/AttendanceTable';
 import { AttendanceForm } from '@/components/AttendanceForm';
-import { CalendarRange, Plus, Search, Filter, Download, RotateCcw } from 'lucide-react';
+import { BulkAttendanceModal } from '@/components/BulkAttendanceModal';
+import { CalendarRange, Plus, Search, Filter, Download, RotateCcw, Users } from 'lucide-react';
 
 export function AttendancePage() {
   const [records, setRecords] = useState<AttendanceRecord[]>([]);
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [showBulkForm, setShowBulkForm] = useState(false);
   const [editingRecord, setEditingRecord] = useState<AttendanceRecord | undefined>();
 
   // Filter States
@@ -18,6 +20,7 @@ export function AttendancePage() {
   const [dateTo, setDateTo] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('All');
   const [empFilter, setEmpFilter] = useState<string>('All');
+  const [deptFilter, setDeptFilter] = useState<string>('All');
 
   const fetchEmployees = async () => {
     try {
@@ -28,14 +31,15 @@ export function AttendancePage() {
     }
   };
 
-  const fetchRecords = async (filters?: { dateFrom?: string; dateTo?: string; status?: string; employee_id?: string }) => {
+  const fetchRecords = async (filters?: { dateFrom?: string; dateTo?: string; status?: string; employee_id?: string; department?: string }) => {
     setLoading(true);
     try {
       const params = new URLSearchParams();
-      if (filters?.dateFrom) params.append('dateFrom', filters.dateFrom);
-      if (filters?.dateTo) params.append('dateTo', filters.dateTo);
+      if (filters?.dateFrom) params.append('date_from', filters.dateFrom);
+      if (filters?.dateTo) params.append('date_to', filters.dateTo);
       if (filters?.status && filters.status !== 'All') params.append('status', filters.status);
       if (filters?.employee_id && filters.employee_id !== 'All') params.append('employee_id', filters.employee_id);
+      if (filters?.department && filters.department !== 'All') params.append('department', filters.department);
 
       const res = await fetch(`/api/attendance?${params.toString()}`);
       if (res.ok) setRecords(await res.json());
@@ -48,12 +52,12 @@ export function AttendancePage() {
 
   useEffect(() => {
     fetchEmployees();
-    fetchRecords({ dateFrom, dateTo, status: statusFilter, employee_id: empFilter });
+    fetchRecords({ dateFrom, dateTo, status: statusFilter, employee_id: empFilter, department: deptFilter });
   }, []);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    fetchRecords({ dateFrom, dateTo, status: statusFilter, employee_id: empFilter });
+    fetchRecords({ dateFrom, dateTo, status: statusFilter, employee_id: empFilter, department: deptFilter });
   };
 
   const handleReset = () => {
@@ -61,7 +65,8 @@ export function AttendancePage() {
     setDateTo('');
     setStatusFilter('All');
     setEmpFilter('All');
-    fetchRecords({ dateFrom: '', dateTo: '', status: 'All', employee_id: 'All' });
+    setDeptFilter('All');
+    fetchRecords({ dateFrom: '', dateTo: '', status: 'All', employee_id: 'All', department: 'All' });
   };
 
   const handleSubmit = async (data: CreateAttendanceInput | UpdateAttendanceInput) => {
@@ -82,12 +87,27 @@ export function AttendancePage() {
           body: JSON.stringify(data),
         });
         if (!res.ok) throw new Error();
-        await fetchRecords({ dateFrom, dateTo, status: statusFilter, employee_id: empFilter });
+        await fetchRecords({ dateFrom, dateTo, status: statusFilter, employee_id: empFilter, department: deptFilter });
       }
       setShowForm(false);
       setEditingRecord(undefined);
     } catch {
       alert('Failed to save attendance record.');
+    }
+  };
+
+  const handleBulkSubmit = async (data: any) => {
+    try {
+      const res = await fetch('/api/attendance/bulk', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error();
+      await fetchRecords({ dateFrom, dateTo, status: statusFilter, employee_id: empFilter, department: deptFilter });
+      setShowBulkForm(false);
+    } catch {
+      alert('Failed to save bulk records.');
     }
   };
 
@@ -159,6 +179,13 @@ export function AttendancePage() {
               Export CSV
             </button>
             <button
+              onClick={() => { setShowBulkForm(true); }}
+              className="flex items-center gap-2 px-4 py-2.5 bg-blue-500 hover:bg-blue-600 text-white rounded-xl text-sm font-semibold transition-colors shadow-sm shadow-blue-200"
+            >
+              <Users className="w-4 h-4" />
+              Bulk Mark
+            </button>
+            <button
               onClick={() => { setEditingRecord(undefined); setShowForm(true); }}
               className="flex items-center gap-2 px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-sm font-semibold transition-colors shadow-sm shadow-emerald-200"
             >
@@ -172,7 +199,21 @@ export function AttendancePage() {
       <div className="max-w-7xl mx-auto px-6 py-6 space-y-6">
         {/* Filters */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-          <form onSubmit={handleSearch} className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+          <form onSubmit={handleSearch} className="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
+            <div>
+              <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Department</label>
+              <select
+                value={deptFilter}
+                onChange={e => setDeptFilter(e.target.value)}
+                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-white"
+              >
+                <option value="All">All Departments</option>
+                {Array.from(new Set(employees.map(e => e.department))).map(dept => (
+                  <option key={dept} value={dept}>{dept}</option>
+                ))}
+              </select>
+            </div>
+            
             <div>
               <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Employee</label>
               <select
@@ -260,6 +301,15 @@ export function AttendancePage() {
           employees={employees}
           onSubmit={handleSubmit}
           onCancel={() => { setShowForm(false); setEditingRecord(undefined); }}
+        />
+      )}
+
+      {/* Bulk Form Modal */}
+      {showBulkForm && (
+        <BulkAttendanceModal
+          employees={employees}
+          onSubmit={handleBulkSubmit}
+          onCancel={() => setShowBulkForm(false)}
         />
       )}
     </div>

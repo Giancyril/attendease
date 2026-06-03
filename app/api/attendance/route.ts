@@ -22,6 +22,7 @@ export async function GET(req: NextRequest) {
     const status = searchParams.get('status') || '';
     const date_from = searchParams.get('date_from') || '';
     const date_to = searchParams.get('date_to') || '';
+    const department = searchParams.get('department') || '';
 
     let sql = `
       SELECT ar.*, e.full_name AS employee_name, e.employee_code, e.department
@@ -55,6 +56,11 @@ export async function GET(req: NextRequest) {
     if (status) {
       sql += ` AND ar.status = $${i}`;
       params.push(status);
+      i++;
+    }
+    if (department) {
+      sql += ` AND e.department = $${i}`;
+      params.push(department);
       i++;
     }
 

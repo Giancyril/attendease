@@ -16,6 +16,7 @@ import {
   ClipboardCheck,
   UserCircle,
   CalendarDays,
+  CalendarOff,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -40,6 +41,7 @@ export function Sidebar({ user }: SidebarProps) {
     { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard' },
     { icon: CalendarDays,    label: 'Attendance',  href: '/attendance' },
     { icon: Users,           label: 'Employees',   href: '/employees' },
+    { icon: CalendarOff,     label: 'Leaves',      href: '/leaves' },
     { icon: BarChart3,       label: 'Analytics',   href: '/analytics' },
     { icon: Settings,        label: 'Settings',    href: '/settings' },
     { icon: HelpCircle,      label: 'Help & Support', href: '/help' },

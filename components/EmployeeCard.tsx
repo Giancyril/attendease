@@ -8,6 +8,7 @@ interface EmployeeCardProps {
   employee: Employee;
   onEdit?: (emp: Employee) => void;
   onToggleStatus?: (emp: Employee) => void;
+  streak?: number;
 }
 
 const statusConfig: Record<EmployeeStatus, { label: string; color: string; bg: string }> = {
@@ -25,7 +26,7 @@ const avatarColors = [
   'from-cyan-400 to-sky-500',
 ];
 
-export function EmployeeCard({ employee, onEdit, onToggleStatus }: EmployeeCardProps) {
+export function EmployeeCard({ employee, onEdit, onToggleStatus, streak }: EmployeeCardProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const s = statusConfig[employee.status] || statusConfig['active'];
   const colorIdx = employee.id % avatarColors.length;
@@ -79,9 +80,16 @@ export function EmployeeCard({ employee, onEdit, onToggleStatus }: EmployeeCardP
         <div className="flex-1 min-w-0 pt-0.5">
           <h3 className="font-bold text-gray-900 text-sm truncate">{employee.full_name}</h3>
           <p className="text-xs text-gray-400 mt-0.5">{employee.employee_code}</p>
-          <span className={`inline-flex mt-1.5 px-2 py-0.5 rounded-full text-xs font-semibold border ${s.bg} ${s.color}`}>
-            {s.label}
-          </span>
+          <div className="flex gap-2 items-center mt-1.5">
+            <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-semibold border ${s.bg} ${s.color}`}>
+              {s.label}
+            </span>
+            {streak !== undefined && streak > 0 && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold border bg-orange-50 border-orange-200 text-orange-700">
+                🔥 {streak} Day Streak
+              </span>
+            )}
+          </div>
         </div>
       </div>
 
