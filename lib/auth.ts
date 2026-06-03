@@ -97,4 +97,4 @@ export function generateToken(): string {
          Math.random().toString(36).substring(2, 15);
 }
 
-export const AUTH_COOKIE_NAME = 'task_manager_session';
+export const AUTH_COOKIE_NAME = 'attendease_session';

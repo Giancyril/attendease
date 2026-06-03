@@ -2,8 +2,8 @@ import { ProtectedLayout } from '@/components/ProtectedLayout';
 import { Analytics } from '@/components/Analytics';
 
 export const metadata = {
-  title: 'Analytics - Task Manager',
-  description: 'View task analytics and insights',
+  title: 'Analytics - AttendEase',
+  description: 'View attendance analytics and workforce insights',
 };
 
 export default function AnalyticsPage() {

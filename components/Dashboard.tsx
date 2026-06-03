@@ -1,209 +1,162 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Task, CreateTaskInput, Priority, Status } from '@/lib/types';
-import { TaskForm } from '@/components/TaskForm';
-import { TaskList } from '@/components/TaskList';
-import { TaskFilters } from '@/components/TaskFilters';
-import { StatsOverview } from '@/components/StatsOverview';
-import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
+import { AttendanceRecord, Employee, TodayStats, CreateAttendanceInput, UpdateAttendanceInput } from '@/lib/types';
+import { StatsCards } from '@/components/StatsCards';
+import { AttendanceTable } from '@/components/AttendanceTable';
+import { AttendanceForm } from '@/components/AttendanceForm';
+import { CalendarDays, Plus, RefreshCw } from 'lucide-react';
 
 export function Dashboard() {
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const [stats, setStats] = useState<TodayStats & { half_day?: number; on_leave?: number } | null>(null);
+  const [records, setRecords] = useState<AttendanceRecord[]>([]);
+  const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [statsLoading, setStatsLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
-  const [editingTask, setEditingTask] = useState<Task | undefined>();
-  const [priorityFilter, setPriorityFilter] = useState<Priority | null>(null);
-  const [statusFilter, setStatusFilter] = useState<Status | null>(null);
-  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [editingRecord, setEditingRecord] = useState<AttendanceRecord | undefined>();
 
-  // Fetch tasks
-  const fetchTasks = async () => {
+  const today = new Date().toISOString().split('T')[0];
+  const todayFormatted = new Date().toLocaleDateString('en-US', {
+    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+  });
+
+  const fetchAll = async () => {
+    setLoading(true);
+    setStatsLoading(true);
     try {
-      setLoading(true);
-      setError(null);
-
-      const params = new URLSearchParams();
-      if (priorityFilter) params.append('priority', priorityFilter);
-      if (statusFilter) params.append('status', statusFilter);
-
-      const response = await fetch(`/api/tasks?${params.toString()}`);
-      if (!response.ok) throw new Error('Failed to fetch tasks');
-
-      const data = await response.json();
-      setTasks(data);
+      const [statsRes, recordsRes, empRes] = await Promise.all([
+        fetch('/api/attendance/today'),
+        fetch(`/api/attendance?date=${today}`),
+        fetch('/api/employees?status=active'),
+      ]);
+      if (statsRes.ok) setStats(await statsRes.json());
+      if (recordsRes.ok) setRecords(await recordsRes.json());
+      if (empRes.ok) setEmployees(await empRes.json());
     } catch (err) {
-      console.error('[Dashboard] Fetch error:', err);
-      setError('Failed to load tasks');
+      console.error('[Dashboard] fetch error:', err);
     } finally {
       setLoading(false);
+      setStatsLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchTasks();
-  }, [priorityFilter, statusFilter]);
+  useEffect(() => { fetchAll(); }, []);
 
-  // Create or update task
-  const handleSubmit = async (data: CreateTaskInput) => {
+  const handleSubmit = async (data: CreateAttendanceInput | UpdateAttendanceInput) => {
     try {
-      if (editingTask) {
-        // Update task
-        const response = await fetch(`/api/tasks/${editingTask.id}`, {
+      if (editingRecord) {
+        const res = await fetch(`/api/attendance/${editingRecord.id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data),
         });
-
-        if (!response.ok) throw new Error('Failed to update task');
-        const updated = await response.json();
-        setTasks(tasks.map(t => t.id === updated.id ? updated : t));
+        if (!res.ok) throw new Error();
+        const updated = await res.json();
+        setRecords(prev => prev.map(r => r.id === updated.id ? updated : r));
       } else {
-        // Create new task
-        const response = await fetch('/api/tasks', {
+        const res = await fetch('/api/attendance', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data),
         });
-
-        if (!response.ok) throw new Error('Failed to create task');
-        const newTask = await response.json();
-        setTasks([newTask, ...tasks]);
+        if (!res.ok) throw new Error();
+        const created = await res.json();
+        setRecords(prev => {
+          const idx = prev.findIndex(r => r.id === created.id);
+          return idx >= 0 ? prev.map(r => r.id === created.id ? created : r) : [created, ...prev];
+        });
       }
-
+      // Refresh stats
+      const sr = await fetch('/api/attendance/today');
+      if (sr.ok) setStats(await sr.json());
       setShowForm(false);
-      setEditingTask(undefined);
-    } catch (err) {
-      console.error('[Dashboard] Submit error:', err);
-      alert('Error saving task. Please try again.');
+      setEditingRecord(undefined);
+    } catch {
+      alert('Failed to save attendance record. Please try again.');
     }
   };
 
-  // Delete task
   const handleDelete = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this task?')) return;
-
+    if (!confirm('Delete this attendance record?')) return;
     try {
-      const response = await fetch(`/api/tasks/${id}`, { method: 'DELETE' });
-      if (!response.ok) throw new Error('Failed to delete task');
-      setTasks(tasks.filter(t => t.id !== id));
-    } catch (err) {
-      console.error('[Dashboard] Delete error:', err);
-      alert('Error deleting task. Please try again.');
+      await fetch(`/api/attendance/${id}`, { method: 'DELETE' });
+      setRecords(prev => prev.filter(r => r.id !== id));
+      const sr = await fetch('/api/attendance/today');
+      if (sr.ok) setStats(await sr.json());
+    } catch {
+      alert('Failed to delete record.');
     }
   };
 
-  // Change task status
-  const handleStatusChange = async (id: number, newStatus: string) => {
-    try {
-      const response = await fetch(`/api/tasks/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: newStatus }),
-      });
-
-      if (!response.ok) throw new Error('Failed to update task');
-      const updated = await response.json();
-      setTasks(tasks.map(t => t.id === updated.id ? updated : t));
-    } catch (err) {
-      console.error('[Dashboard] Status change error:', err);
-    }
-  };
-
-  const handleEdit = (task: Task) => {
-    setEditingTask(task);
+  const handleEdit = (record: AttendanceRecord) => {
+    setEditingRecord(record);
     setShowForm(true);
   };
-
-  const handleCancel = () => {
-    setShowForm(false);
-    setEditingTask(undefined);
-  };
-
-  const hasActiveFilters = priorityFilter !== null || statusFilter !== null;
 
   return (
     <div className="min-h-screen bg-gray-50 animate-fadeIn">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">Task Manager</h1>
-              <p className="text-gray-600 mt-1">Organize and track your tasks efficiently</p>
+      <div className="bg-white border-b border-gray-100 px-6 py-5">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <CalendarDays className="w-5 h-5 text-emerald-500" />
+              <span className="text-xs font-semibold text-emerald-600 uppercase tracking-wider">Today</span>
             </div>
-            <Button
-              onClick={() => {
-                setEditingTask(undefined);
-                setShowForm(true);
-              }}
-              className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2"
+            <h1 className="text-2xl font-bold text-gray-900">Attendance Dashboard</h1>
+            <p className="text-sm text-gray-400 mt-0.5">{todayFormatted}</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={fetchAll}
+              className="p-2.5 rounded-xl border border-gray-200 text-gray-400 hover:text-gray-700 hover:bg-gray-50 transition-colors"
+              title="Refresh"
             >
-              <Plus className="w-5 h-5" />
-              New Task
-            </Button>
+              <RefreshCw className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => { setEditingRecord(undefined); setShowForm(true); }}
+              className="flex items-center gap-2 px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-sm font-semibold transition-colors shadow-sm shadow-emerald-200"
+            >
+              <Plus className="w-4 h-4" />
+              Mark Attendance
+            </button>
           </div>
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+      {/* Body */}
+      <div className="max-w-7xl mx-auto px-6 py-6 space-y-6">
         {/* Stats */}
-        <div className="mb-8">
-          <StatsOverview tasks={tasks} />
-        </div>
+        <StatsCards stats={stats ?? { total_employees: 0, present: 0, absent: 0, late: 0, on_leave: 0, attendance_rate: 0 }} loading={statsLoading} />
 
-        {/* Form Modal */}
-        {showForm && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="max-w-2xl w-full">
-              <TaskForm
-                task={editingTask}
-                onSubmit={handleSubmit}
-                onCancel={handleCancel}
-              />
-            </div>
+        {/* Today's Attendance Table */}
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-base font-bold text-gray-800">Today's Attendance</h2>
+            <span className="text-xs text-gray-400">{records.length} record{records.length !== 1 ? 's' : ''}</span>
           </div>
-        )}
-
-        {/* Main Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Sidebar - Filters */}
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg p-4 sticky top-4">
-              <TaskFilters
-                priorityFilter={priorityFilter}
-                statusFilter={statusFilter}
-                onPriorityChange={setPriorityFilter}
-                onStatusChange={setStatusFilter}
-                hasActiveFilters={hasActiveFilters}
-              />
-            </div>
-          </div>
-
-          {/* Main Content - Task List */}
-          <div className="lg:col-span-3">
-            {loading ? (
-              <div className="text-center py-12">
-                <div className="text-gray-400">Loading tasks...</div>
-              </div>
-            ) : error ? (
-              <div className="text-center py-12">
-                <div className="text-red-600">{error}</div>
-              </div>
-            ) : (
-              <TaskList
-                tasks={tasks}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-                onStatusChange={handleStatusChange}
-              />
-            )}
-          </div>
+          <AttendanceTable
+            records={records}
+            loading={loading}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+            showEmployee
+          />
         </div>
       </div>
+
+      {/* Form Modal */}
+      {showForm && (
+        <AttendanceForm
+          record={editingRecord}
+          employees={employees}
+          defaultDate={today}
+          onSubmit={handleSubmit}
+          onCancel={() => { setShowForm(false); setEditingRecord(undefined); }}
+        />
+      )}
     </div>
   );
 }

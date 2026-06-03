@@ -2,8 +2,8 @@ import { ProtectedLayout } from '@/components/ProtectedLayout';
 import { Dashboard } from '@/components/Dashboard';
 
 export const metadata = {
-  title: 'Dashboard - Task Manager',
-  description: 'Manage your tasks efficiently',
+  title: 'Dashboard - AttendEase',
+  description: 'Monitor today\'s attendance and workforce status',
 };
 
 export default function DashboardPage() {

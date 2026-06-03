@@ -1,0 +1,267 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { AttendanceRecord, Employee, AttendanceStatus, CreateAttendanceInput, UpdateAttendanceInput } from '@/lib/types';
+import { AttendanceTable } from '@/components/AttendanceTable';
+import { AttendanceForm } from '@/components/AttendanceForm';
+import { CalendarRange, Plus, Search, Filter, Download, RotateCcw } from 'lucide-react';
+
+export function AttendancePage() {
+  const [records, setRecords] = useState<AttendanceRecord[]>([]);
+  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [editingRecord, setEditingRecord] = useState<AttendanceRecord | undefined>();
+
+  // Filter States
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('All');
+  const [empFilter, setEmpFilter] = useState<string>('All');
+
+  const fetchEmployees = async () => {
+    try {
+      const res = await fetch('/api/employees');
+      if (res.ok) setEmployees(await res.json());
+    } catch (err) {
+      console.error('[AttendancePage] failed to fetch employees:', err);
+    }
+  };
+
+  const fetchRecords = async (filters?: { dateFrom?: string; dateTo?: string; status?: string; employee_id?: string }) => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams();
+      if (filters?.dateFrom) params.append('dateFrom', filters.dateFrom);
+      if (filters?.dateTo) params.append('dateTo', filters.dateTo);
+      if (filters?.status && filters.status !== 'All') params.append('status', filters.status);
+      if (filters?.employee_id && filters.employee_id !== 'All') params.append('employee_id', filters.employee_id);
+
+      const res = await fetch(`/api/attendance?${params.toString()}`);
+      if (res.ok) setRecords(await res.json());
+    } catch (err) {
+      console.error('[AttendancePage] failed to fetch records:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchEmployees();
+    fetchRecords({ dateFrom, dateTo, status: statusFilter, employee_id: empFilter });
+  }, []);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    fetchRecords({ dateFrom, dateTo, status: statusFilter, employee_id: empFilter });
+  };
+
+  const handleReset = () => {
+    setDateFrom('');
+    setDateTo('');
+    setStatusFilter('All');
+    setEmpFilter('All');
+    fetchRecords({ dateFrom: '', dateTo: '', status: 'All', employee_id: 'All' });
+  };
+
+  const handleSubmit = async (data: CreateAttendanceInput | UpdateAttendanceInput) => {
+    try {
+      if (editingRecord) {
+        const res = await fetch(`/api/attendance/${editingRecord.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+        if (!res.ok) throw new Error();
+        const updated = await res.json();
+        setRecords(prev => prev.map(r => r.id === updated.id ? updated : r));
+      } else {
+        const res = await fetch('/api/attendance', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+        if (!res.ok) throw new Error();
+        await fetchRecords({ dateFrom, dateTo, status: statusFilter, employee_id: empFilter });
+      }
+      setShowForm(false);
+      setEditingRecord(undefined);
+    } catch {
+      alert('Failed to save attendance record.');
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!confirm('Are you sure you want to delete this record?')) return;
+    try {
+      const res = await fetch(`/api/attendance/${id}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error();
+      setRecords(prev => prev.filter(r => r.id !== id));
+    } catch {
+      alert('Failed to delete attendance record.');
+    }
+  };
+
+  const handleEdit = (record: AttendanceRecord) => {
+    setEditingRecord(record);
+    setShowForm(true);
+  };
+
+  const handleExportCSV = () => {
+    if (records.length === 0) return alert('No records to export');
+    
+    const headers = ['Record ID', 'Employee Name', 'Employee Code', 'Department', 'Date', 'Clock In', 'Clock Out', 'Status', 'Notes'];
+    const rows = records.map(r => [
+      r.id,
+      r.employee_name || '',
+      r.employee_code || '',
+      r.department || '',
+      r.date.split('T')[0],
+      r.clock_in || '',
+      r.clock_out || '',
+      r.status,
+      r.notes || ''
+    ]);
+
+    const csvContent = "data:text/csv;charset=utf-8," 
+      + [headers.join(','), ...rows.map(e => e.map(val => `"${String(val).replace(/"/g, '""')}"`).join(","))].join("\n");
+    
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `attendance_export_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 animate-fadeIn">
+      {/* Header */}
+      <div className="bg-white border-b border-gray-100 px-6 py-5">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
+              <CalendarRange className="w-5 h-5 text-emerald-600" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">Attendance Logs</h1>
+              <p className="text-sm text-gray-400 mt-0.5">Filter, view, and export attendance records</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleExportCSV}
+              disabled={records.length === 0}
+              className="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 rounded-xl text-sm font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+            >
+              <Download className="w-4 h-4" />
+              Export CSV
+            </button>
+            <button
+              onClick={() => { setEditingRecord(undefined); setShowForm(true); }}
+              className="flex items-center gap-2 px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-sm font-semibold transition-colors shadow-sm shadow-emerald-200"
+            >
+              <Plus className="w-4 h-4" />
+              Add Record
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-6 py-6 space-y-6">
+        {/* Filters */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+          <form onSubmit={handleSearch} className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+            <div>
+              <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Employee</label>
+              <select
+                value={empFilter}
+                onChange={e => setEmpFilter(e.target.value)}
+                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-white"
+              >
+                <option value="All">All Employees</option>
+                {employees.map(e => (
+                  <option key={e.id} value={e.id}>{e.full_name}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Status</label>
+              <select
+                value={statusFilter}
+                onChange={e => setStatusFilter(e.target.value)}
+                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-white"
+              >
+                <option value="All">All Statuses</option>
+                <option value="present">Present</option>
+                <option value="absent">Absent</option>
+                <option value="late">Late</option>
+                <option value="half-day">Half Day</option>
+                <option value="holiday">Holiday</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">From Date</label>
+              <input
+                type="date"
+                value={dateFrom}
+                onChange={e => setDateFrom(e.target.value)}
+                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-white"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">To Date</label>
+              <input
+                type="date"
+                value={dateTo}
+                onChange={e => setDateTo(e.target.value)}
+                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-white"
+              />
+            </div>
+
+            <div className="flex gap-2">
+              <button
+                type="submit"
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-sm font-semibold transition-colors"
+              >
+                <Filter className="w-4 h-4" />
+                Filter
+              </button>
+              <button
+                type="button"
+                onClick={handleReset}
+                className="p-2.5 border border-gray-200 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-xl transition-all"
+                title="Reset Filters"
+              >
+                <RotateCcw className="w-4 h-4" />
+              </button>
+            </div>
+          </form>
+        </div>
+
+        {/* Main Logs Table */}
+        <AttendanceTable
+          records={records}
+          loading={loading}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+          showEmployee={true}
+        />
+      </div>
+
+      {/* Form Modal */}
+      {showForm && (
+        <AttendanceForm
+          record={editingRecord}
+          employees={employees}
+          onSubmit={handleSubmit}
+          onCancel={() => { setShowForm(false); setEditingRecord(undefined); }}
+        />
+      )}
+    </div>
+  );
+}

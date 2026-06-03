@@ -7,9 +7,9 @@ const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'TaskFlow - Organize Your Work',
-  description: 'A powerful task management application with full CRUD operations using PostgreSQL database',
-  generator: 'TaskFlow',
+  title: 'AttendEase - Digital Attendance System',
+  description: 'A powerful employee attendance management system with full records logs, active employees directory, stats and analytics reporting.',
+  generator: 'AttendEase',
 }
 
 export default function RootLayout({
