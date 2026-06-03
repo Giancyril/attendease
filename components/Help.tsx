@@ -20,27 +20,27 @@ export function Help() {
 
   const faqItems = [
     {
-      question: 'How do I create a new task?',
-      answer: 'Click the "New Task" button on the dashboard, fill in the task details, and click Save.',
+      question: 'How do I mark attendance?',
+      answer: 'Go to the Dashboard or Attendance Logs page, click "Mark Attendance" or "Add Record", select the employee and status, and save.',
     },
     {
-      question: 'How can I filter tasks by status or priority?',
-      answer: 'Use the filter dropdowns in the sidebar on the dashboard to filter tasks by status or priority.',
+      question: 'How can I filter attendance records?',
+      answer: 'On the Attendance Logs page, use the filters at the top to search by date range, employee, or specific status (Present, Late, etc.).',
     },
     {
-      question: 'How do I update a task?',
-      answer: 'Click the "Edit" button on any task card, make your changes, and click Save.',
+      question: 'How do I add a new employee?',
+      answer: 'Navigate to the Employees directory, click the "Add Employee" button, and fill out their details.',
     },
     {
-      question: 'How do I delete a task?',
-      answer: 'Click the "Delete" button on any task card and confirm the deletion.',
+      question: 'How do I deactivate an employee?',
+      answer: 'On the Employees directory, click the three-dot menu on their card and select "Deactivate". Their records will be preserved.',
     },
     {
-      question: 'Can I assign tasks to team members?',
-      answer: 'Yes! When creating or editing a task, enter the assignee name in the Assignee field.',
+      question: 'Can I export attendance logs?',
+      answer: 'Yes! On the Attendance Logs page, click the "Export CSV" button to download a spreadsheet of the currently filtered records.',
     },
     {
-      question: 'How do I change my password?',
+      question: 'How do I change my admin password?',
       answer: 'Go to Settings > Security and enter your current password and new password.',
     },
   ];
@@ -49,19 +49,19 @@ export function Help() {
     {
       icon: Book,
       title: 'Documentation',
-      description: 'Comprehensive guides and API documentation',
+      description: 'Comprehensive guides on managing attendance',
       link: '#',
     },
     {
       icon: FileText,
       title: 'Tutorials',
-      description: 'Step-by-step tutorials to get started',
+      description: 'Step-by-step onboarding for administrators',
       link: '#',
     },
     {
       icon: MessageCircle,
       title: 'Community Forum',
-      description: 'Connect with other users and get help',
+      description: 'Connect with other HR professionals',
       link: '#',
     },
   ];
@@ -77,10 +77,10 @@ export function Help() {
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
           <div className="flex items-center gap-3">
-            <HelpCircle className="w-8 h-8 text-blue-600" />
+            <HelpCircle className="w-8 h-8 text-emerald-600" />
             <div>
               <h1 className="text-3xl font-bold text-gray-900">Help & Support</h1>
-              <p className="text-gray-600 mt-1">Find answers and get support</p>
+              <p className="text-gray-600 mt-1">Find answers and get support for AttendEase</p>
             </div>
           </div>
         </div>
@@ -97,7 +97,7 @@ export function Help() {
               placeholder="Search for help..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-12 py-6 text-lg"
+              className="pl-12 py-6 text-lg focus:ring-emerald-500"
             />
           </div>
         </div>
@@ -109,13 +109,13 @@ export function Help() {
             return (
               <Card key={index} className="p-6 hover:shadow-lg transition-shadow cursor-pointer">
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Icon className="w-6 h-6 text-blue-600" />
+                  <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Icon className="w-6 h-6 text-emerald-600" />
                   </div>
                   <div className="flex-1">
                     <h3 className="font-semibold text-gray-900 mb-1">{resource.title}</h3>
                     <p className="text-sm text-gray-600 mb-3">{resource.description}</p>
-                    <a href={resource.link} className="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1">
+                    <a href={resource.link} className="text-sm text-emerald-600 hover:text-emerald-700 flex items-center gap-1">
                       Learn more <ExternalLink className="w-4 h-4" />
                     </a>
                   </div>
@@ -155,22 +155,22 @@ export function Help() {
             Our support team is here to help you with any questions or issues.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="flex items-start gap-4 p-4 bg-blue-50 rounded-lg">
-              <Mail className="w-6 h-6 text-blue-600 flex-shrink-0 mt-1" />
+            <div className="flex items-start gap-4 p-4 bg-emerald-50 rounded-lg">
+              <Mail className="w-6 h-6 text-emerald-600 flex-shrink-0 mt-1" />
               <div>
                 <h3 className="font-semibold text-gray-900 mb-1">Email Support</h3>
                 <p className="text-sm text-gray-600 mb-3">Get help via email within 24 hours</p>
-                <a href="mailto:support@taskmanager.com" className="text-blue-600 hover:text-blue-700 text-sm font-medium">
-                  support@taskmanager.com
+                <a href="mailto:support@attendease.com" className="text-emerald-600 hover:text-emerald-700 text-sm font-medium">
+                  support@attendease.com
                 </a>
               </div>
             </div>
-            <div className="flex items-start gap-4 p-4 bg-green-50 rounded-lg">
-              <MessageCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
+            <div className="flex items-start gap-4 p-4 bg-teal-50 rounded-lg">
+              <MessageCircle className="w-6 h-6 text-teal-600 flex-shrink-0 mt-1" />
               <div>
                 <h3 className="font-semibold text-gray-900 mb-1">Live Chat</h3>
                 <p className="text-sm text-gray-600 mb-3">Chat with our support team now</p>
-                <Button size="sm" className="bg-green-600 hover:bg-green-700">
+                <Button size="sm" className="bg-teal-600 hover:bg-teal-700">
                   Start Chat
                 </Button>
               </div>
@@ -183,39 +183,39 @@ export function Help() {
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Getting Started</h2>
           <div className="space-y-4">
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center flex-shrink-0 font-bold">
+              <div className="w-8 h-8 bg-emerald-600 text-white rounded-full flex items-center justify-center flex-shrink-0 font-bold">
                 1
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900 mb-1">Create Your First Task</h3>
-                <p className="text-gray-600">Click the "New Task" button and fill in the task details.</p>
+                <h3 className="font-semibold text-gray-900 mb-1">Add Employees</h3>
+                <p className="text-gray-600">Navigate to the Employees directory and add your team members to the system.</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center flex-shrink-0 font-bold">
+              <div className="w-8 h-8 bg-emerald-600 text-white rounded-full flex items-center justify-center flex-shrink-0 font-bold">
                 2
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900 mb-1">Organize with Filters</h3>
-                <p className="text-gray-600">Use status and priority filters to organize your tasks.</p>
+                <h3 className="font-semibold text-gray-900 mb-1">Log Daily Attendance</h3>
+                <p className="text-gray-600">Use the Dashboard or Attendance Logs page to mark staff as Present, Late, or Absent.</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center flex-shrink-0 font-bold">
+              <div className="w-8 h-8 bg-emerald-600 text-white rounded-full flex items-center justify-center flex-shrink-0 font-bold">
                 3
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900 mb-1">Track Progress</h3>
-                <p className="text-gray-600">Visit the Analytics page to see your task completion stats.</p>
+                <h3 className="font-semibold text-gray-900 mb-1">Analyze Workforce Patterns</h3>
+                <p className="text-gray-600">Visit the Analytics page to see attendance rates, department breakdown, and leave statistics.</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center flex-shrink-0 font-bold">
+              <div className="w-8 h-8 bg-emerald-600 text-white rounded-full flex items-center justify-center flex-shrink-0 font-bold">
                 4
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900 mb-1">Collaborate with Team</h3>
-                <p className="text-gray-600">Invite team members and assign tasks to them.</p>
+                <h3 className="font-semibold text-gray-900 mb-1">Export Data</h3>
+                <p className="text-gray-600">Download CSV reports of attendance records for payroll or HR purposes.</p>
               </div>
             </div>
           </div>
