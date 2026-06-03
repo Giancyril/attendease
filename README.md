@@ -1,4 +1,4 @@
-# 🎯 Task Management Dashboard - CRUD Application
+#  Task Management Dashboard - CRUD Application
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Next.js](https://img.shields.io/badge/Next.js-16-black)
@@ -8,7 +8,7 @@
 
 A full-stack web application implementing complete CRUD (Create, Read, Update, Delete) operations for task management with PostgreSQL database integration.
 
-## ✨ Features
+##  Features
 
 ### Complete CRUD Operations
 - ✅ **CREATE** - Add new tasks and users
@@ -46,7 +46,7 @@ A full-stack web application implementing complete CRUD (Create, Read, Update, D
 - Dark mode for auth pages
 - Light mode for dashboard
 
-## 🚀 Quick Start
+##  Quick Start
 
 ### Prerequisites
 - Node.js (v18 or higher)
@@ -88,7 +88,7 @@ A full-stack web application implementing complete CRUD (Create, Read, Update, D
    - Navigate to http://localhost:3000
    - Create an account or use demo credentials
 
-## 🎮 Usage
+##  Usage
 
 ### Demo Credentials
 - **Username:** demo
@@ -122,7 +122,7 @@ A full-stack web application implementing complete CRUD (Create, Read, Update, D
 - Confirm deletion when prompted
 - Task is removed from database
 
-## 📊 Database Schema
+##  Database Schema
 
 ### Users Table
 ```sql
@@ -159,7 +159,7 @@ created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 expires_at      TIMESTAMP NOT NULL
 ```
 
-## 🔌 API Endpoints
+##  API Endpoints
 
 ### Authentication
 ```
@@ -178,7 +178,7 @@ PUT    /api/tasks/[id]     - Update specific task
 DELETE /api/tasks/[id]     - Delete specific task
 ```
 
-## 🛠️ Technology Stack
+##  Technology Stack
 
 ### Frontend
 - **Next.js 16** - React framework with App Router
@@ -203,7 +203,7 @@ DELETE /api/tasks/[id]     - Delete specific task
 - **Turbopack** - Fast bundler
 - **dotenv** - Environment variables
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 task-management-dashboard/
@@ -237,7 +237,7 @@ task-management-dashboard/
 └── package.json               # Dependencies and scripts
 ```
 
-## 📝 Available Scripts
+##  Available Scripts
 
 ```bash
 # Development
@@ -322,7 +322,7 @@ SELECT * FROM sessions WHERE expires_at > CURRENT_TIMESTAMP;
 - Verify password hashing is working
 - Try creating a new account
 
-## 📚 Documentation
+##  Documentation
 
 Comprehensive documentation available:
 - 📖 **[Quick Start Guide](QUICKSTART.md)** - Get up and running in 5 minutes
@@ -336,7 +336,7 @@ Comprehensive documentation available:
 - ❓ **[FAQ](FAQ.md)** - Frequently asked questions
 - 🚀 **[Deployment Guide](DEPLOYMENT_GUIDE.md)** - Production deployment
 
-## 🔒 Security Features
+##  Security Features
 
 - Password hashing with bcrypt
 - HTTP-only cookies for session tokens
@@ -345,7 +345,7 @@ Comprehensive documentation available:
 - Input validation on frontend and backend
 - Protected API routes requiring authentication
 
-## 🎯 CRUD Requirements Compliance
+##  CRUD Requirements Compliance
 
 This application fully implements the requirements for:
 **"Basic Database Operations - Web-Based App CRUD (Create/Insert, Read/Select, Update, Delete)"**
@@ -382,7 +382,7 @@ This application fully implements the requirements for:
 - Error handling and validation
 - Modern UI with loading states
 
-## 👨‍💻 Development
+##  Development
 
 ### Adding New Features
 1. Define types in `lib/types.ts`
@@ -397,7 +397,7 @@ Currently using simple initialization script. For production:
 2. Version control schema changes
 3. Implement rollback strategies
 
-## 🚀 Deployment
+##  Deployment
 
 ### Prerequisites for Production
 - PostgreSQL database (cloud or self-hosted)
@@ -406,7 +406,7 @@ Currently using simple initialization script. For production:
 
 See `DEPLOYMENT_GUIDE.md` for detailed instructions.
 
-## 📞 Support
+##  Support
 
 For issues or questions:
 1. Check troubleshooting section
@@ -414,11 +414,11 @@ For issues or questions:
 3. Verify database connection
 4. Check server logs in terminal
 
-## 📄 License
+##  License
 
 This project is for educational purposes demonstrating CRUD operations with a modern web stack.
 
-## 🎉 Current Status
+##  Current Status
 
 ✅ Database: Connected and initialized
 ✅ Server: Running on http://localhost:3000
@@ -426,9 +426,3 @@ This project is for educational purposes demonstrating CRUD operations with a mo
 ✅ Authentication: Working
 ✅ UI: Responsive and modern
 ✅ Documentation: Complete
-
-**The application is ready to use!**
-
----
-
-**Built with ❤️ using Next.js, TypeScript, PostgreSQL, and Tailwind CSS**
