@@ -23,6 +23,13 @@ A full-stack web application implementing complete CRUD (Create, Read, Update, D
 - Statistics dashboard with task counts
 - Quick status updates
 
+### AttendEase & Employee Features
+- **Bulk Attendance Marking**: Mark multiple employees present/absent/late simultaneously.
+- **Leave Management Workflow**: Request time off and track employee leaves (annual, sick, unpaid).
+- **Profile Settings Update**: Users can dynamically update their full name and email address.
+- **Custom Date Picker**: A consistent, beautiful `react-day-picker` component used across all forms.
+- **Premium Auth UI**: Modern glassmorphism design with animated mesh gradients for login and signup pages.
+
 ### User Authentication
 - User registration (signup)
 - User login with session management

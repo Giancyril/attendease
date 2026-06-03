@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,9 +9,49 @@ import { Switch } from '@/components/ui/switch';
 import { Settings as SettingsIcon, User, Bell, Shield, Palette, Database } from 'lucide-react';
 
 export function Settings() {
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState('');
+
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [pushNotifications, setPushNotifications] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
+
+  useEffect(() => {
+    fetch('/api/auth/me')
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.user) {
+          setFullName(data.user.full_name || '');
+          setEmail(data.user.email || '');
+        }
+      })
+      .catch(console.error);
+  }, []);
+
+  const handleProfileSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    setMessage('');
+    try {
+      const res = await fetch('/api/user/profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ full_name: fullName, email }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to update profile');
+      setMessage('Profile updated successfully!');
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
+    } catch (err: any) {
+      setMessage(err.message);
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 animate-fadeIn">
@@ -67,14 +107,17 @@ export function Settings() {
                 <User className="w-5 h-5" />
                 Profile Settings
               </h2>
-              <div className="space-y-4">
+              <form onSubmit={handleProfileSubmit} className="space-y-4">
                 <div>
                   <Label htmlFor="full-name">Full Name</Label>
                   <Input
                     id="full-name"
                     type="text"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
                     placeholder="John Doe"
                     className="mt-1"
+                    required
                   />
                 </div>
                 <div>
@@ -82,17 +125,11 @@ export function Settings() {
                   <Input
                     id="email"
                     type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     placeholder="john@example.com"
                     className="mt-1"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="username">Username</Label>
-                  <Input
-                    id="username"
-                    type="text"
-                    placeholder="johndoe"
-                    className="mt-1"
+                    required
                   />
                 </div>
                 <div>
@@ -104,12 +141,19 @@ export function Settings() {
                     placeholder="Tell us about yourself..."
                   />
                 </div>
+                
+                {message && (
+                  <p className={`text-sm ${message.includes('success') ? 'text-emerald-600' : 'text-red-600'}`}>
+                    {message}
+                  </p>
+                )}
+
                 <div className="flex justify-end">
-                  <Button className="bg-blue-600 hover:bg-blue-700">
-                    Save Changes
+                  <Button type="submit" disabled={saving} className="bg-blue-600 hover:bg-blue-700">
+                    {saving ? 'Saving...' : 'Save Changes'}
                   </Button>
                 </div>
-              </div>
+              </form>
             </Card>
 
             {/* Notification Settings */}

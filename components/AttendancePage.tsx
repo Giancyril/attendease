@@ -5,6 +5,7 @@ import { AttendanceRecord, Employee, AttendanceStatus, CreateAttendanceInput, Up
 import { AttendanceTable } from '@/components/AttendanceTable';
 import { AttendanceForm } from '@/components/AttendanceForm';
 import { BulkAttendanceModal } from '@/components/BulkAttendanceModal';
+import { CustomDatePicker } from '@/components/CustomDatePicker';
 import { CalendarRange, Plus, Search, Filter, Download, RotateCcw, Users } from 'lucide-react';
 
 export function AttendancePage() {
@@ -244,25 +245,22 @@ export function AttendancePage() {
               </select>
             </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">From Date</label>
-              <input
-                type="date"
-                value={dateFrom}
-                onChange={e => setDateFrom(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-white"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">To Date</label>
-              <input
-                type="date"
-                value={dateTo}
-                onChange={e => setDateTo(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-white"
-              />
-            </div>
+              <div className="md:col-span-2 relative z-20">
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">From Date</label>
+                <CustomDatePicker
+                  value={dateFrom}
+                  onChange={setDateFrom}
+                  placeholder="Select date"
+                />
+              </div>
+              <div className="md:col-span-2 relative z-10">
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">To Date</label>
+                <CustomDatePicker
+                  value={dateTo}
+                  onChange={setDateTo}
+                  placeholder="Select date"
+                />
+              </div>
 
             <div className="flex gap-2">
               <button

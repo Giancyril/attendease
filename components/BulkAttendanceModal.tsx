@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Employee, AttendanceStatus } from '@/lib/types';
 import { X, Check } from 'lucide-react';
+import { CustomDatePicker } from '@/components/CustomDatePicker';
 
 interface BulkAttendanceModalProps {
   employees: Employee[];
@@ -67,12 +68,10 @@ export function BulkAttendanceModal({ employees, defaultDate, onSubmit, onCancel
             <form id="bulk-form" onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1.5">Date</label>
-                <input
-                  type="date"
-                  required
+                <CustomDatePicker
                   value={date}
-                  onChange={e => setDate(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                  onChange={setDate}
+                  placeholder="Select date"
                 />
               </div>
               

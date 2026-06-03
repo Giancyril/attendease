@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Employee, AttendanceRecord, AttendanceStatus, CreateAttendanceInput, UpdateAttendanceInput } from '@/lib/types';
 import { X, Clock, User } from 'lucide-react';
+import { CustomDatePicker } from '@/components/CustomDatePicker';
 
 interface AttendanceFormProps {
   record?: AttendanceRecord;
@@ -106,8 +107,12 @@ export function AttendanceForm({ record, employees = [], defaultDate, onSubmit, 
           {/* Date (only for create) */}
           {!record && (
             <div>
-              <label className={labelClass}>Date *</label>
-              <input type="date" name="date" value={form.date} onChange={handleChange} required className={inputClass} />
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5">Date</label>
+              <CustomDatePicker
+                value={form.date}
+                onChange={(val) => setForm({ ...form, date: val })}
+                placeholder="Select date"
+              />
             </div>
           )}
 

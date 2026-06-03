@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Employee, CreateLeaveInput, LeaveType } from '@/lib/types';
 import { X } from 'lucide-react';
+import { CustomDatePicker } from '@/components/CustomDatePicker';
 
 interface LeaveFormProps {
   employees: Employee[];
@@ -76,22 +77,18 @@ export function LeaveForm({ employees, onSubmit, onCancel }: LeaveFormProps) {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1.5">Start Date</label>
-              <input
-                type="date"
-                required
+              <CustomDatePicker
                 value={startDate}
-                onChange={e => setStartDate(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-violet-400"
+                onChange={setStartDate}
+                placeholder="Select start date"
               />
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1.5">End Date</label>
-              <input
-                type="date"
-                required
+              <CustomDatePicker
                 value={endDate}
-                onChange={e => setEndDate(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-violet-400"
+                onChange={setEndDate}
+                placeholder="Select end date"
               />
             </div>
           </div>
