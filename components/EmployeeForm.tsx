@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Employee, CreateEmployeeInput, EmployeeStatus } from '@/lib/types';
 import { X, UserPlus } from 'lucide-react';
+import { CustomSelect } from '@/components/CustomSelect';
 
 interface EmployeeFormProps {
   employee?: Employee;
@@ -120,12 +121,15 @@ export function EmployeeForm({ employee, onSubmit, onCancel }: EmployeeFormProps
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className={labelClass}>Department *</label>
-              <select name="department" value={form.department} onChange={handleChange} required className={inputClass}>
-                <option value="">Select…</option>
-                {DEPARTMENTS.map(d => (
-                  <option key={d} value={d}>{d}</option>
-                ))}
-              </select>
+              <CustomSelect
+                value={form.department}
+                onChange={(val) => setForm(prev => ({ ...prev, department: val }))}
+                options={[
+                  { value: '', label: 'Select department…' },
+                  ...DEPARTMENTS.map(d => ({ value: d, label: d }))
+                ]}
+                placeholder="Select department…"
+              />
             </div>
             <div>
               <label className={labelClass}>Position *</label>
@@ -144,11 +148,16 @@ export function EmployeeForm({ employee, onSubmit, onCancel }: EmployeeFormProps
           {/* Status */}
           <div>
             <label className={labelClass}>Status</label>
-            <select name="status" value={form.status} onChange={handleChange} className={inputClass}>
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-              <option value="on-leave">On Leave</option>
-            </select>
+            <CustomSelect
+              value={form.status}
+              onChange={(val) => setForm(prev => ({ ...prev, status: val as EmployeeStatus }))}
+              options={[
+                { value: 'active', label: 'Active' },
+                { value: 'inactive', label: 'Inactive' },
+                { value: 'on-leave', label: 'On Leave' },
+              ]}
+              placeholder="Select status…"
+            />
           </div>
 
           {/* Actions */}

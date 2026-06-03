@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Employee, CreateLeaveInput, LeaveType } from '@/lib/types';
 import { X } from 'lucide-react';
 import { CustomDatePicker } from '@/components/CustomDatePicker';
+import { CustomSelect } from '@/components/CustomSelect';
 
 interface LeaveFormProps {
   employees: Employee[];
@@ -43,36 +44,31 @@ export function LeaveForm({ employees, onSubmit, onCancel }: LeaveFormProps) {
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1.5">Employee</label>
-            <select
-              required
-              value={employeeId}
-              onChange={e => setEmployeeId(parseInt(e.target.value))}
-              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-violet-400"
-            >
-              {employees.filter(e => e.status === 'active').map(e => (
-                <option key={e.id} value={e.id}>{e.full_name}</option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1.5">Leave Type</label>
-            <select
-              required
-              value={leaveType}
-              onChange={e => setLeaveType(e.target.value as LeaveType)}
-              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-violet-400"
-            >
-              <option value="annual">Annual Leave</option>
-              <option value="sick">Sick Leave</option>
-              <option value="emergency">Emergency</option>
-              <option value="maternity">Maternity</option>
-              <option value="paternity">Paternity</option>
-              <option value="unpaid">Unpaid</option>
-            </select>
-          </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5">Employee</label>
+              <CustomSelect
+                value={String(employeeId)}
+                onChange={(val) => setEmployeeId(parseInt(val))}
+                options={employees.map(e => ({ value: String(e.id), label: `${e.full_name} (${e.department})` }))}
+                placeholder="Select employee…"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5">Leave Type</label>
+              <CustomSelect
+                value={leaveType}
+                onChange={(val) => setLeaveType(val as LeaveType)}
+                options={[
+                  { value: 'annual', label: 'Annual Leave' },
+                  { value: 'sick', label: 'Sick Leave' },
+                  { value: 'unpaid', label: 'Unpaid Leave' },
+                  { value: 'maternity', label: 'Maternity Leave' },
+                  { value: 'paternity', label: 'Paternity Leave' },
+                  { value: 'emergency', label: 'Emergency Leave' },
+                ]}
+                placeholder="Select type…"
+              />
+            </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>

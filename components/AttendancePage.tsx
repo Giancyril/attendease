@@ -6,6 +6,7 @@ import { AttendanceTable } from '@/components/AttendanceTable';
 import { AttendanceForm } from '@/components/AttendanceForm';
 import { BulkAttendanceModal } from '@/components/BulkAttendanceModal';
 import { CustomDatePicker } from '@/components/CustomDatePicker';
+import { CustomSelect } from '@/components/CustomSelect';
 import { CalendarRange, Plus, Search, Filter, Download, RotateCcw, Users } from 'lucide-react';
 
 export function AttendancePage() {
@@ -203,46 +204,45 @@ export function AttendancePage() {
           <form onSubmit={handleSearch} className="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
             <div>
               <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Department</label>
-              <select
+              <CustomSelect
                 value={deptFilter}
-                onChange={e => setDeptFilter(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-white"
-              >
-                <option value="All">All Departments</option>
-                {Array.from(new Set(employees.map(e => e.department))).map(dept => (
-                  <option key={dept} value={dept}>{dept}</option>
-                ))}
-              </select>
+                onChange={setDeptFilter}
+                options={[
+                  { value: 'All', label: 'All Departments' },
+                  ...Array.from(new Set(employees.map(e => e.department))).map(dept => ({ value: dept, label: dept }))
+                ]}
+                placeholder="All Departments"
+              />
             </div>
             
             <div>
               <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Employee</label>
-              <select
+              <CustomSelect
                 value={empFilter}
-                onChange={e => setEmpFilter(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-white"
-              >
-                <option value="All">All Employees</option>
-                {employees.map(e => (
-                  <option key={e.id} value={e.id}>{e.full_name}</option>
-                ))}
-              </select>
+                onChange={setEmpFilter}
+                options={[
+                  { value: 'All', label: 'All Employees' },
+                  ...employees.map(e => ({ value: String(e.id), label: e.full_name }))
+                ]}
+                placeholder="All Employees"
+              />
             </div>
 
             <div>
               <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Status</label>
-              <select
+              <CustomSelect
                 value={statusFilter}
-                onChange={e => setStatusFilter(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-white"
-              >
-                <option value="All">All Statuses</option>
-                <option value="present">Present</option>
-                <option value="absent">Absent</option>
-                <option value="late">Late</option>
-                <option value="half-day">Half Day</option>
-                <option value="holiday">Holiday</option>
-              </select>
+                onChange={setStatusFilter}
+                options={[
+                  { value: 'All', label: 'All Statuses' },
+                  { value: 'present', label: 'Present' },
+                  { value: 'absent', label: 'Absent' },
+                  { value: 'late', label: 'Late' },
+                  { value: 'half-day', label: 'Half Day' },
+                  { value: 'holiday', label: 'Holiday' },
+                ]}
+                placeholder="All Statuses"
+              />
             </div>
 
               <div className="md:col-span-2 relative z-20">

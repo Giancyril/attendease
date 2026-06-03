@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Employee, CreateEmployeeInput } from '@/lib/types';
 import { EmployeeCard } from '@/components/EmployeeCard';
 import { EmployeeForm } from '@/components/EmployeeForm';
+import { CustomSelect } from '@/components/CustomSelect';
 import { Users, UserPlus, Search, Building2 } from 'lucide-react';
 
 const DEPARTMENTS = ['All', 'Engineering', 'Design', 'QA', 'DevOps', 'HR', 'Marketing', 'Finance', 'Operations', 'Sales', 'Legal'];
@@ -128,15 +129,16 @@ export function Employees() {
             />
           </div>
           <div className="relative">
-            <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <select
+            <CustomSelect
               value={deptFilter}
-              onChange={e => setDeptFilter(e.target.value)}
-              className="pl-9 pr-8 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-white appearance-none"
-            >
-              <option value="All">All Departments</option>
-              {depts.map(d => <option key={d} value={d}>{d}</option>)}
-            </select>
+              onChange={setDeptFilter}
+              options={[
+                { value: 'All', label: 'All Departments' },
+                ...depts.map(d => ({ value: d, label: d }))
+              ]}
+              placeholder="All Departments"
+              icon={<Building2 className="w-4 h-4" />}
+            />
           </div>
         </div>
 

@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { Employee, AttendanceStatus } from '@/lib/types';
 import { X, Check } from 'lucide-react';
 import { CustomDatePicker } from '@/components/CustomDatePicker';
+import { CustomSelect } from '@/components/CustomSelect';
+import { CustomTimePicker } from '@/components/CustomTimePicker';
 
 interface BulkAttendanceModalProps {
   employees: Employee[];
@@ -15,8 +17,8 @@ interface BulkAttendanceModalProps {
 export function BulkAttendanceModal({ employees, defaultDate, onSubmit, onCancel }: BulkAttendanceModalProps) {
   const [date, setDate] = useState(defaultDate || new Date().toISOString().split('T')[0]);
   const [status, setStatus] = useState<AttendanceStatus>('present');
-  const [clockIn, setClockIn] = useState('09:00');
-  const [clockOut, setClockOut] = useState('17:00');
+  const [clockIn, setClockIn] = useState('09:00:00');
+  const [clockOut, setClockOut] = useState('17:00:00');
   const [notes, setNotes] = useState('');
   
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
@@ -77,37 +79,36 @@ export function BulkAttendanceModal({ employees, defaultDate, onSubmit, onCancel
               
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1.5">Status</label>
-                <select
+                <CustomSelect
                   value={status}
-                  onChange={e => setStatus(e.target.value as AttendanceStatus)}
-                  className="w-full px-3 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-400"
-                >
-                  <option value="present">Present</option>
-                  <option value="absent">Absent</option>
-                  <option value="late">Late</option>
-                  <option value="half-day">Half Day</option>
-                  <option value="holiday">Holiday</option>
-                </select>
+                  onChange={(val) => setStatus(val as AttendanceStatus)}
+                  options={[
+                    { value: 'present', label: 'Present' },
+                    { value: 'absent', label: 'Absent' },
+                    { value: 'late', label: 'Late' },
+                    { value: 'half-day', label: 'Half Day' },
+                    { value: 'holiday', label: 'Holiday' },
+                  ]}
+                  placeholder="Select status…"
+                />
               </div>
 
               {(status === 'present' || status === 'late' || status === 'half-day') && (
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-1.5">Clock In</label>
-                    <input
-                      type="time"
+                    <CustomTimePicker
                       value={clockIn}
-                      onChange={e => setClockIn(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                      onChange={setClockIn}
+                      placeholder="Set time"
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-1.5">Clock Out</label>
-                    <input
-                      type="time"
+                    <CustomTimePicker
                       value={clockOut}
-                      onChange={e => setClockOut(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                      onChange={setClockOut}
+                      placeholder="Set time"
                     />
                   </div>
                 </div>
